@@ -11,16 +11,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 }
 
-let appInstance = null
-let authInstance = null
-let dbInstance = null
+let appInstance
+let authInstance
+let dbInstance
 
 function getFirebaseApp() {
   if (!appInstance) {
     appInstance = getApps().length
       ? getApp()
       : initializeApp(firebaseConfig)
-
   }
 
   return appInstance
