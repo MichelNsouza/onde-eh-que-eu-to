@@ -1,11 +1,11 @@
 import {
-    createUserWithEmailAndPassword,
-    signOut as firebaseSignOut,
-    onAuthStateChanged,
-    signInWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  signInWithEmailAndPassword
 } from 'firebase/auth'
 
-import { auth } from '@/config/firebase'
+const auth = getFirebaseAuth()
 
 const FirebaseAuth = {
   async signIn(email, password) {
