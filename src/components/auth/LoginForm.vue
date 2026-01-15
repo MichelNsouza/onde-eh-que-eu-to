@@ -25,7 +25,12 @@
       >
         Entrar
       </v-btn>
-    </v-card-actions>
+      </v-card-actions>
+      <v-card-actions>
+        <v-btn color="primary" block @click="$router.push('/registrar')">
+          Registrar-se
+        </v-btn>
+      </v-card-actions>
 
     <v-alert
       v-if="error"
