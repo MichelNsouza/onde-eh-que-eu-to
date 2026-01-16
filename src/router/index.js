@@ -18,6 +18,10 @@ const routes = [
     path: '/lista',
     component: ReadingList,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/lista'
   }
 ]
 

@@ -39,6 +39,7 @@ export default {
       try {
         const authService = await getAuthService()
         await authService.signUp(email, password)
+        alert('Ative a conta no seu email antes de fazer login.')
         this.$router.push('/login')
       } catch (err) {
         this.error = err.message || 'Erro ao criar conta'
