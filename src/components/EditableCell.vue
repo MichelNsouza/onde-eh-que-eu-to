@@ -1,25 +1,44 @@
 <template>
+  <!-- MODO VISUAL -->
+  <span
+    v-if="!editable"
+    class="editable-cell view"
+  >
+    <slot :value="value">
+      {{ value }}
+    </slot>
+  </span>
+
+  <!-- MODO EDIÇÃO -->
   <v-menu
+    v-else
     v-model="open"
     :close-on-content-click="false"
-    activator="parent"
   >
     <template #activator="{ props }">
       <span
         v-bind="props"
-        class="editable-cell"
+        class="editable-cell edit"
       >
-        {{ value }}
+        <slot :value="value">
+          {{ value }}
+        </slot>
       </span>
     </template>
 
-    <v-card min-width="200" class="pa-2">
-      <v-text-field
-        v-model="localValue"
-        density="compact"
-        autofocus
-        @keydown.enter="save"
-      />
+    <v-card min-width="220" class="pa-2">
+      <slot
+        name="input"
+        :value="localValue"
+        :update="update"
+      >
+        <v-text-field
+          v-model="localValue"
+          density="compact"
+          autofocus
+          @keydown.enter="save"
+        />
+      </slot>
 
       <v-card-actions class="justify-end">
         <v-btn size="small" variant="text" @click="cancel">
@@ -37,7 +56,11 @@
 import { ref, watch } from 'vue'
 
 const props = defineProps({
-  value: [String, Number]
+  value: [String, Number],
+  editable: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const emit = defineEmits(['save'])
@@ -49,6 +72,18 @@ watch(
   () => props.value,
   v => (localValue.value = v)
 )
+
+watch(
+  () => props.editable,
+  v => {
+    open.value = v
+    if (v) localValue.value = props.value
+  }
+)
+
+function update (v) {
+  localValue.value = v
+}
 
 function save () {
   emit('save', localValue.value)
@@ -62,7 +97,11 @@ function cancel () {
 </script>
 
 <style scoped>
-.editable-cell {
-  cursor: pointer;
+.editable-cell.view {
+  cursor: default;
+}
+
+.editable-cell.edit {
+  cursor: text;
 }
 </style>

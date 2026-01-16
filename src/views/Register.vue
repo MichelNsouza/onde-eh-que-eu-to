@@ -1,10 +1,15 @@
 <template>
   <v-container>
+    <v-btn color="primary" @click="$router.push('/login')">
+      <v-icon>mdi-arrow-left</v-icon>
+      Voltar
+    </v-btn>
     <RegisterForm
       :loading="loading"
       :error="error"
       @submit="handleRegister"
     />
+ 
   </v-container>
 </template>
 

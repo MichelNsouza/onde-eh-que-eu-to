@@ -16,9 +16,10 @@ const SupabaseReadingListRepository = {
       .from('reading_list')
       .insert([item])
       .select()
+      .single()
 
     if (error) throw error
-    return data[0]
+    return data
   },
 
   async update(id, updates) {
@@ -43,6 +44,13 @@ const SupabaseReadingListRepository = {
 
     if (error) throw error
     return true
+  },
+
+  async logout() {
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error('Erro ao deslogar:', error)
+    }
   },
 
   async incrementCapitulo(id, currentValue) {
