@@ -27,6 +27,15 @@
       @save="addNewItem"
     />
 
+    <v-btn
+      color="error"
+      variant="outlined"
+      @click="logout"
+    >
+      <v-icon start>mdi-logout</v-icon>
+      Sair
+    </v-btn>
+
     <ConfirmDeleteDialog
       v-model="deleteDialog"
       :item="itemToDelete"
@@ -63,12 +72,12 @@ export default {
       itemToDelete: null,
 
       headers: [
-        { text: 'Nome', value: 'nome', sortable: true },
-        { text: 'Temporada', value: 'temporada', sortable: true, width: '120px' },
-        { text: 'Capítulo', value: 'capitulo', sortable: true, width: '150px' },
-        { text: 'Link', value: 'link', sortable: false },
-        { text: 'Tipo', value: 'tipo', sortable: true, width: '120px' },
-        { text: 'Ações', value: 'actions', sortable: false, width: '80px' }
+        { title: 'Nome', key: 'nome', sortable: true },
+        { title: 'Temporada', key: 'temporada', sortable: true },
+        { title: 'Capítulo', key: 'capitulo', sortable: true },
+        { title: 'Link', key: 'link' },
+        { title: 'Tipo', key: 'tipo', sortable: true },
+        { title: 'Ações', key: 'actions', sortable: false }
       ],
 
       tipos: ['manga', 'manhwa', 'manhua', 'serie', 'anime', 'livro', 'comic']
@@ -126,6 +135,11 @@ export default {
       }
       this.deleteDialog = false
       this.itemToDelete = null
+    },
+
+    async logout () {
+      await this.repo.logout()
+      this.$router.push('/login')
     }
   }
 }

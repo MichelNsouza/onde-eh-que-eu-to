@@ -25,6 +25,17 @@ const ApiReadingListRepository = {
     return true
   },
 
+  async logout() {
+    try {
+      await api.post('/logout')
+    } catch (error) {
+      console.warn('Logout API:', error?.response?.data || error.message)
+    } finally {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+    }
+  },
+
   async incrementCapitulo(id, currentValue) {
     return this.update(id, { capitulo: currentValue + 1 })
   },
