@@ -19,7 +19,8 @@ export default {
         serie: 'green',
         anime: 'orange',
         livro: 'brown',
-        comic: 'pink'
+        comic: 'pink',
+        adulto: 'deep-purple'
       }
       return colors[this.tipo] || 'grey'
     }

@@ -15,7 +15,7 @@
         @save="onSave(item.id, { nome: $event })"
       >
         <template #default="{ value }">
-          {{ value }}
+          {{ formatNome(value) }}
         </template>
 
         <template #input="{ value, update }">
@@ -223,6 +223,13 @@ export default {
   },
 
   methods: {
+    formatNome (value) {
+      if (!value) return ''
+      return value
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase())
+    },
+
     startEdit (item) {
       this.editingId = item.id
     },
@@ -239,7 +246,7 @@ export default {
       return {
         class: [
           index % 2 === 0 ? 'row-even' : 'row-odd',
-          item.link === 'finalizado' ? 'row-finalizado' : '',
+          item.status === 'finalizado' ? 'row-finalizado' : '',
           this.editingId === item.id ? 'row-editing' : ''
         ]
       }

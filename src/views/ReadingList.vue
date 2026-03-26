@@ -3,14 +3,22 @@
     <v-card>
       <v-card-title class="d-flex justify-space-between">
         Minhas Leituras
-        <v-btn color="primary" @click="addDialog = true">
-          <v-icon>mdi-plus</v-icon>
-          Adicionar
-        </v-btn>
+        <div class="d-flex gap-2">
+          <v-btn
+            :icon="showAdulto ? 'mdi-eye' : 'mdi-eye-off'"
+            :color="showAdulto ? 'primary' : 'grey'"
+            variant="text"
+            @click="showAdulto = !showAdulto"
+          />
+          <v-btn color="primary" @click="addDialog = true">
+            <v-icon>mdi-plus</v-icon>
+            Adicionar
+          </v-btn>
+        </div>
       </v-card-title>
 
       <ReadingListTable
-        :items="items"
+        :items="lendoItems"
         :headers="headers"
         :loading="loading"
         :tipos="tipos"
@@ -23,6 +31,92 @@
         @delete="confirmDelete"
       />
     </v-card>
+
+    <v-expansion-panels class="mt-4" multiple>
+      <v-expansion-panel v-if="queroLerItems.length">
+        <v-expansion-panel-title>
+          Quero acompanhar ({{ queroLerItems.length }})
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <ReadingListTable
+            :items="queroLerItems"
+            :headers="headers"
+            :loading="loading"
+            :tipos="tipos"
+            :statuses="statuses"
+            @update="updateItemField"
+            @increment="incrementCap"
+            @decrement="decrementCap"
+            @incrementTemporada="incrementTemp"
+            @decrementTemporada="decrementTemp"
+            @delete="confirmDelete"
+          />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
+      <v-expansion-panel v-if="pausadoItems.length">
+        <v-expansion-panel-title>
+          Pausados ({{ pausadoItems.length }})
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <ReadingListTable
+            :items="pausadoItems"
+            :headers="headers"
+            :loading="loading"
+            :tipos="tipos"
+            :statuses="statuses"
+            @update="updateItemField"
+            @increment="incrementCap"
+            @decrement="decrementCap"
+            @incrementTemporada="incrementTemp"
+            @decrementTemporada="decrementTemp"
+            @delete="confirmDelete"
+          />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
+      <v-expansion-panel v-if="abandonadoItems.length">
+        <v-expansion-panel-title>
+          Abandonados ({{ abandonadoItems.length }})
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <ReadingListTable
+            :items="abandonadoItems"
+            :headers="headers"
+            :loading="loading"
+            :tipos="tipos"
+            :statuses="statuses"
+            @update="updateItemField"
+            @increment="incrementCap"
+            @decrement="decrementCap"
+            @incrementTemporada="incrementTemp"
+            @decrementTemporada="decrementTemp"
+            @delete="confirmDelete"
+          />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
+      <v-expansion-panel v-if="finishedItems.length">
+        <v-expansion-panel-title>
+          Finalizados ({{ finishedItems.length }})
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <ReadingListTable
+            :items="finishedItems"
+            :headers="headers"
+            :loading="loading"
+            :tipos="tipos"
+            :statuses="statuses"
+            @update="updateItemField"
+            @increment="incrementCap"
+            @decrement="decrementCap"
+            @incrementTemporada="incrementTemp"
+            @decrementTemporada="decrementTemp"
+            @delete="confirmDelete"
+          />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
     <AddItemDialog
       v-model="addDialog"
@@ -74,6 +168,7 @@ export default {
       addDialog: false,
       deleteDialog: false,
       itemToDelete: null,
+      showAdulto: false,
 
       headers: [
         { title: 'Nome', key: 'nome', sortable: true },
@@ -85,8 +180,8 @@ export default {
         { title: 'Ações', key: 'actions', sortable: false }
       ],
 
-      tipos: ['manga', 'manhwa', 'manhua', 'serie', 'anime', 'livro', 'comic'],
-      statuses: ['lendo', 'quero ler', 'pausado', 'abandonado', 'finalizado']
+      tipos: ['manga', 'manhwa', 'manhua', 'serie', 'anime', 'livro', 'comic', 'adulto'],
+      statuses: ['acompanhando', 'quero acompanhar', 'pausado', 'abandonado', 'finalizado']
     }
   },
 
@@ -94,6 +189,27 @@ export default {
     // ✅ AQUI ESTÁ A CORREÇÃO
     this.repo = readingListRepository
     this.fetchItems()
+  },
+
+  computed: {
+    visibleItems() {
+      return this.showAdulto ? this.items : this.items.filter(i => i.tipo !== 'adulto')
+    },
+    lendoItems() {
+      return this.visibleItems.filter(i => i.status === 'acompanhando')
+    },
+    queroLerItems() {
+      return this.visibleItems.filter(i => i.status === 'quero acompanhar')
+    },
+    pausadoItems() {
+      return this.visibleItems.filter(i => i.status === 'pausado')
+    },
+    abandonadoItems() {
+      return this.visibleItems.filter(i => i.status === 'abandonado')
+    },
+    finishedItems() {
+      return this.visibleItems.filter(i => i.status === 'finalizado')
+    }
   },
 
   methods: {
