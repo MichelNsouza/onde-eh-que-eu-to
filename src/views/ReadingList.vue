@@ -14,9 +14,12 @@
         :headers="headers"
         :loading="loading"
         :tipos="tipos"
+        :statuses="statuses"
         @update="updateItemField"
         @increment="incrementCap"
         @decrement="decrementCap"
+        @incrementTemporada="incrementTemp"
+        @decrementTemporada="decrementTemp"
         @delete="confirmDelete"
       />
     </v-card>
@@ -24,6 +27,7 @@
     <AddItemDialog
       v-model="addDialog"
       :tipos="tipos"
+      :statuses="statuses"
       @save="addNewItem"
     />
 
@@ -77,10 +81,12 @@ export default {
         { title: 'Capítulo', key: 'capitulo', sortable: true },
         { title: 'Link', key: 'link' },
         { title: 'Tipo', key: 'tipo', sortable: true },
+        { title: 'Status', key: 'status', sortable: true },
         { title: 'Ações', key: 'actions', sortable: false }
       ],
 
-      tipos: ['manga', 'manhwa', 'manhua', 'serie', 'anime', 'livro', 'comic']
+      tipos: ['manga', 'manhwa', 'manhua', 'serie', 'anime', 'livro', 'comic'],
+      statuses: ['lendo', 'quero ler', 'pausado', 'abandonado', 'finalizado']
     }
   },
 
@@ -114,6 +120,16 @@ export default {
 
     async decrementCap(item) {
       await this.repo.decrementCapitulo(item.id, item.capitulo)
+      await this.fetchItems()
+    },
+
+    async incrementTemp(item) {
+      await this.repo.incrementTemporada(item.id, item.temporada)
+      await this.fetchItems()
+    },
+
+    async decrementTemp(item) {
+      await this.repo.decrementTemporada(item.id, item.temporada)
       await this.fetchItems()
     },
 
