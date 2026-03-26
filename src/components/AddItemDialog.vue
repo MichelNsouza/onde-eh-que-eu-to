@@ -13,6 +13,7 @@
         <v-text-field v-model.number="item.capitulo" label="Capítulo" type="number" />
         <v-text-field v-model="item.link" label="Link" />
         <v-select v-model="item.tipo" :items="tipos" label="Tipo" />
+        <v-select v-model="item.status" :items="statuses" label="Status" />
       </v-card-text>
 
       <v-card-actions>
@@ -36,6 +37,10 @@ export default {
     tipos: {
       type: Array,
       required: true
+    },
+    statuses: {
+      type: Array,
+      required: true
     }
   },
 
@@ -48,7 +53,8 @@ export default {
         temporada: 1,
         capitulo: 1,
         link: '',
-        tipo: 'manga'
+        tipo: 'manga',
+        status: 'acompanhando'
       }
     }
   },

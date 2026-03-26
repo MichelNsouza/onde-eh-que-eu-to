@@ -45,6 +45,17 @@ const ApiReadingListRepository = {
       return this.update(id, { capitulo: currentValue - 1 })
     }
     return null
+  },
+
+  async incrementTemporada(id, currentValue) {
+    return this.update(id, { temporada: currentValue + 1 })
+  },
+
+  async decrementTemporada(id, currentValue) {
+    if (currentValue > 1) {
+      return this.update(id, { temporada: currentValue - 1 })
+    }
+    return null
   }
 }
 

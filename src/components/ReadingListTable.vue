@@ -15,7 +15,7 @@
         @save="onSave(item.id, { nome: $event })"
       >
         <template #default="{ value }">
-          {{ value }}
+          {{ formatNome(value) }}
         </template>
 
         <template #input="{ value, update }">
@@ -29,13 +29,57 @@
       </EditableCell>
     </template>
 
-    <template v-slot:item.capitulo="{ item }">
+    <!-- TEMPORADA -->
+    <template v-slot:item.temporada="{ item }">
+      <EditableCell
+        v-if="editingId === item.id"
+        :value="item.temporada"
+        :editable="true"
+        @save="onSave(item.id, { temporada: Number($event) })"
+      >
+        <template #input="{ value, update }">
+          <v-text-field
+            :model-value="value"
+            @update:model-value="update"
+            type="number"
+            min="1"
+            single-line
+            autofocus
+          />
+        </template>
+      </EditableCell>
       <CapituloControl
+        v-else
+        :value="item.temporada"
+        @increment="$emit('incrementTemporada', item)"
+        @decrement="$emit('decrementTemporada', item)"
+      />
+    </template>
+
+    <!-- CAPÍTULO -->
+    <template v-slot:item.capitulo="{ item }">
+      <EditableCell
+        v-if="editingId === item.id"
         :value="item.capitulo"
-        :disabled="editingId !== item.id"
+        :editable="true"
+        @save="onSave(item.id, { capitulo: Number($event) })"
+      >
+        <template #input="{ value, update }">
+          <v-text-field
+            :model-value="value"
+            @update:model-value="update"
+            type="number"
+            min="1"
+            single-line
+            autofocus
+          />
+        </template>
+      </EditableCell>
+      <CapituloControl
+        v-else
+        :value="item.capitulo"
         @increment="$emit('increment', item)"
         @decrement="$emit('decrement', item)"
-        @update="onSave(item.id, { capitulo: $event })"
       />
     </template>
 
@@ -94,6 +138,27 @@
       </EditableCell>
     </template>
 
+    <!-- STATUS -->
+    <template v-slot:item.status="{ item }">
+      <EditableCell
+        :value="item.status"
+        :editable="editingId === item.id"
+        @save="onSave(item.id, { status: $event })"
+      >
+        <template #default>
+          <StatusChip :status="item.status" />
+        </template>
+
+        <template #input="{ value, update }">
+          <v-select
+            :items="statuses"
+            :model-value="value"
+            @update:model-value="update"
+          />
+        </template>
+      </EditableCell>
+    </template>
+
     <template v-slot:item.actions="{ item }">
       <v-btn
         icon
@@ -130,6 +195,7 @@
 <script>
 import CapituloControl from '@/components/CapituloControl.vue';
 import EditableCell from '@/components/EditableCell.vue';
+import StatusChip from '@/components/StatusChip.vue';
 import TipoChip from '@/components/TipoChip.vue';
 
 export default {
@@ -138,6 +204,7 @@ export default {
   components: {
     EditableCell,
     CapituloControl,
+    StatusChip,
     TipoChip
   },
 
@@ -145,7 +212,8 @@ export default {
     items: Array,
     headers: Array,
     loading: Boolean,
-    tipos: Array
+    tipos: Array,
+    statuses: Array
   },
 
   data () {
@@ -155,6 +223,13 @@ export default {
   },
 
   methods: {
+    formatNome (value) {
+      if (!value) return ''
+      return value
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase())
+    },
+
     startEdit (item) {
       this.editingId = item.id
     },
@@ -171,7 +246,7 @@ export default {
       return {
         class: [
           index % 2 === 0 ? 'row-even' : 'row-odd',
-          item.link === 'finalizado' ? 'row-finalizado' : '',
+          item.status === 'finalizado' ? 'row-finalizado' : '',
           this.editingId === item.id ? 'row-editing' : ''
         ]
       }
